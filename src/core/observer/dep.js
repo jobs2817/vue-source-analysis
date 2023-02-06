@@ -17,7 +17,7 @@ export default class Dep {
 
   constructor () {
     this.id = uid++
-    this.subs = []
+    this.subs = [] // 属性依赖收集到的 watcher (render-watcher | computed-watcher | user-watcher)
   }
 
   addSub (sub: Watcher) {
@@ -36,15 +36,15 @@ export default class Dep {
 
   notify () {
     // stabilize the subscriber list first
-    const subs = this.subs.slice()
+    const subs = this.subs.slice() // 缓存 一份 subs
     if (process.env.NODE_ENV !== 'production' && !config.async) {
       // subs aren't sorted in scheduler if not running async
       // we need to sort them now to make sure they fire in correct
       // order
-      subs.sort((a, b) => a.id - b.id)
+      subs.sort((a, b) => a.id - b.id) // 执行循序  computed -> watch -> render-watcher
     }
     for (let i = 0, l = subs.length; i < l; i++) {
-      subs[i].update()
+      subs[i].update() // watch 触发回调, render-watcher 渲染视图,触发回调执行 updated 生命周期钩子
     }
   }
 }
@@ -52,8 +52,8 @@ export default class Dep {
 // The current target watcher being evaluated.
 // This is globally unique because only one watcher
 // can be evaluated at a time.
-Dep.target = null
-const targetStack = []
+Dep.target = null // 定义全局变量
+const targetStack = [] // 用于存放 watcher, 
 
 export function pushTarget (target: ?Watcher) {
   targetStack.push(target)

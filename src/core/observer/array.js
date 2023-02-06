@@ -28,7 +28,7 @@ methodsToPatch.forEach(function (method) {
   const original = arrayProto[method]
   // 在空对象上添加以上 7 个方法, 用于往数组原型链上挂载
   def(arrayMethods, method, function mutator (...args) {
-    const result = original.apply(this, args)
+    const result = original.apply(this, args) // 缓存原函数执行的结果用于返回
     const ob = this.__ob__  // Observer 实例
     let inserted
     switch (method) {

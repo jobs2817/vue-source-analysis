@@ -58,7 +58,7 @@ export default class Watcher {
     // options
     if (options) {
       this.deep = !!options.deep
-      this.user = !!options.user  // options 中配置的 watcher的标识
+      this.user = !!options.user  // option中配置的 watcher的标识
       this.lazy = !!options.lazy  // computed 惰性求值标识
       this.sync = !!options.sync
       this.before = options.before

@@ -15,7 +15,7 @@ function flushCallbacks () {
   const copies = callbacks.slice(0)
   callbacks.length = 0
   for (let i = 0; i < copies.length; i++) {
-    copies[i]()
+    copies[i]() // 执行 cb 包裹的 () => {}
   }
 }
 
@@ -30,7 +30,10 @@ function flushCallbacks () {
 // where microtasks have too high a priority and fire in between supposedly
 // sequential events (e.g. #4521, #6690, which have workarounds)
 // or even between bubbling of the same event (#6566).
-let timerFunc
+let timerFunc 
+
+// 浏览器优先级
+// promise -> MutationObserver -> setImmediate -> setTimeout
 
 // The nextTick behavior leverages the microtask queue, which can be accessed
 // via either native Promise.then or MutationObserver.
@@ -86,23 +89,23 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
-  callbacks.push(() => {
+  callbacks.push(() => { // 将 cb 用一个 function 包裹,形成一个闭包
     if (cb) {
       try {
-        cb.call(ctx)
+        cb.call(ctx) // 包裹值 function 执行后立执行
       } catch (e) {
         handleError(e, ctx, 'nextTick')
       }
     } else if (_resolve) {
-      _resolve(ctx)
+      _resolve(ctx) // promise padding 状态 -> fulfilled
     }
   })
-  if (!pending) {
+  if (!pending) { // 异步任务执行的标识, 为 false 执行一次 异步任务
     pending = true
     timerFunc()
   }
   // $flow-disable-line
-  if (!cb && typeof Promise !== 'undefined') {
+  if (!cb && typeof Promise !== 'undefined') {  // 兼容不传人 cb 时, 默认返回一个 Promise
     return new Promise(resolve => {
       _resolve = resolve
     })

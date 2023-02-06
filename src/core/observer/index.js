@@ -159,7 +159,7 @@ export function defineReactive (
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
-      if (Dep.target) { // watcher
+      if (Dep.target) { // watcher, 此处的 watch 可能是 渲染 watch, 也可能是 computed对应的watcher
         dep.depend()  // 往 dep 添加 watcher
         if (childOb) { // 是一个引用类型
           childOb.dep.depend() // Observer 实例上 dep 添加 依赖收集
@@ -173,7 +173,7 @@ export function defineReactive (
     set: function reactiveSetter (newVal) {
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) {
+      if (newVal === value || (newVal !== newVal && value !== value)) { // NAN
         return
       }
       /* eslint-enable no-self-compare */
