@@ -28,7 +28,7 @@ export function initMixin (Vue: Class<Component>) {
 
     // a flag to avoid this being observed
     vm._isVue = true
-    // merge options
+    // 合并组件的 option
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -47,15 +47,16 @@ export function initMixin (Vue: Class<Component>) {
     } else {
       vm._renderProxy = vm
     }
+    // 以下 init 过程可知 beforeCreate 之前还没进行响应式数据初始化, options 属性配置还没代理到 vm 上, 所以无法通过  this 访问
     // expose real self
     vm._self = vm
     initLifecycle(vm) // 初始化声明周期相关的变量
-    initEvents(vm)
+    initEvents(vm) // 注册事件中心
     initRender(vm)  // 解析模板
     callHook(vm, 'beforeCreate') // 执行  beforeCreate 回调
-    initInjections(vm) // resolve injections before data/props
+    initInjections(vm) // 初始化 inject, 向上层寻找 provide
     initState(vm) // 初始化  props  methods data computed  watcher
-    initProvide(vm) // resolve provide after data/props
+    initProvide(vm) // 初始化 provide
     callHook(vm, 'created') // 执行  created 回调
 
     /* istanbul ignore if */
@@ -64,7 +65,7 @@ export function initMixin (Vue: Class<Component>) {
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-
+    // dom 挂载, 内部触发  beforeMount & mounted 方法
     if (vm.$options.el) {
       vm.$mount(vm.$options.el) // 将 vm 挂载到 对应节点上
     }
@@ -72,7 +73,7 @@ export function initMixin (Vue: Class<Component>) {
 }
 
 export function initInternalComponent (vm: Component, options: InternalComponentOptions) {
-  const opts = vm.$options = Object.create(vm.constructor.options)
+  const opts = vm.$options = Object.create(vm.constructor.options) // 以 options 创建一个对象
   // doing this because it's faster than dynamic enumeration.
   const parentVnode = options._parentVnode
   opts.parent = options.parent
@@ -91,7 +92,7 @@ export function initInternalComponent (vm: Component, options: InternalComponent
 }
 
 export function resolveConstructorOptions (Ctor: Class<Component>) {
-  let options = Ctor.options
+  let options = Ctor.options // 获取 new Vue 时传入的 options 参数
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions

@@ -34,12 +34,13 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   // exposed util methods.
   // NOTE: these are not considered part of the public API - avoid relying on
   // them unless you are aware of the risk.
+  // 定义一系列静态方法
   Vue.util = {
     warn,
     extend,
     mergeOptions,
     defineReactive
-  }
+  } 
 
   Vue.set = set
   Vue.delete = del
@@ -51,7 +52,10 @@ export function initGlobalAPI (Vue: GlobalAPI) {
     return obj
   }
 
+  // 初始化 vue.option属性 component directive filter, 方便后面, 方便后面 mergeOption
+
   Vue.options = Object.create(null)
+
   ASSET_TYPES.forEach(type => {
     Vue.options[type + 's'] = Object.create(null)
   })
@@ -61,9 +65,12 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   Vue.options._base = Vue
 
   extend(Vue.options.components, builtInComponents)
-
+  {/* vue.install 注册 */}
   initUse(Vue)
+  {/* mixin 注册 */}
   initMixin(Vue)
+
   initExtend(Vue)
-  initAssetRegisters(Vue)
+  {/* 全局 component filter directive api 注册 */}
+  initAssetRegisters(Vue) 
 }

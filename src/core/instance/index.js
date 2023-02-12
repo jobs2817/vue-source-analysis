@@ -15,9 +15,9 @@ function Vue (options) {
 }
 
 initMixin(Vue)
-stateMixin(Vue)
-eventsMixin(Vue)
-lifecycleMixin(Vue)
-renderMixin(Vue)
+stateMixin(Vue) // 初始化 $data. $props, watch 挂载在原型上
+eventsMixin(Vue) // 注册全局事件中心
+lifecycleMixin(Vue) // 生命周期相关
+renderMixin(Vue) // _render 挂载原型上
 
 export default Vue

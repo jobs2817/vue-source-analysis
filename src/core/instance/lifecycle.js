@@ -34,19 +34,22 @@ export function initLifecycle (vm: Component) {
 
   // locate first non-abstract parent
   let parent = options.parent
+  // 存在父级组件 并且 父级组件不是 keep-alive
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
       parent = parent.$parent
     }
+    // 将自身放到 父级 组件 $children 里面
     parent.$children.push(vm)
   }
 
   vm.$parent = parent
+  // 将根组件放到 $root上
   vm.$root = parent ? parent.$root : vm
 
   vm.$children = []
   vm.$refs = {}
-
+  // 将当前组件的_watcher设置为 空
   vm._watcher = null
   vm._inactive = null
   vm._directInactive = false

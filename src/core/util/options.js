@@ -304,9 +304,9 @@ function normalizeProps (options: Object, vm: ?Component) {
     i = props.length
     while (i--) {
       val = props[i]
-      if (typeof val === 'string') {
+      if (typeof val === 'string') { // option.props 属性如果是 Array, 属性必须是一个 string 类型
         name = camelize(val)
-        res[name] = { type: null }
+        res[name] = { type: null } // 将属性类型默认添加为 null
       } else if (process.env.NODE_ENV !== 'production') {
         warn('props must be strings when using array syntax.')
       }
@@ -315,7 +315,7 @@ function normalizeProps (options: Object, vm: ?Component) {
     for (const key in props) {
       val = props[key]
       name = camelize(key)
-      res[name] = isPlainObject(val)
+      res[name] = isPlainObject(val) // 入参兼容,  props: {value: String} ->  {value: { type: String} }
         ? val
         : { type: val }
     }
@@ -343,7 +343,7 @@ function normalizeInject (options: Object, vm: ?Component) {
   } else if (isPlainObject(inject)) {
     for (const key in inject) {
       const val = inject[key]
-      normalized[key] = isPlainObject(val)
+      normalized[key] = isPlainObject(val) // {value: {default: 'Vue'} -> {value: {from: 'value', default: 'Vue'}}
         ? extend({ from: key }, val)
         : { from: val }
     }
@@ -365,7 +365,7 @@ function normalizeDirectives (options: Object) {
     for (const key in dirs) {
       const def = dirs[key]
       if (typeof def === 'function') {
-        dirs[key] = { bind: def, update: def }
+        dirs[key] = { bind: def, update: def }  // function类型 转化成  { bind: function(){}, update:function(){} }
       }
     }
   }
@@ -398,9 +398,9 @@ export function mergeOptions (
     child = child.options
   }
 
-  normalizeProps(child, vm)
-  normalizeInject(child, vm)
-  normalizeDirectives(child)
+  normalizeProps(child, vm) // 标准化 props 结构
+  normalizeInject(child, vm) // 标准化 inject 结构
+  normalizeDirectives(child) // 标准化 指令 结构
 
   // Apply extends and mixins on the child options,
   // but only if it is a raw options object that isn't
